@@ -7,85 +7,104 @@ date: "`r format(Sys.time(), '%d %B %Y')`"
 abstract: "COVID-19 has greatly impacted the global society for the past few years. This research aims to discover infection trends of COVID-19, aiding the development of more effective strategies for future pandemic preparedness, including enhanced control plans and hospital infrastructure constructions. Downloading the COVID cases data from Open Data Toronto, graphical analysis including bar charts and line charts are conducted to access distribution patterns, severity levels, and trends. The findings conclude that elderly females are most severly infected and the younger generation tends to be infected more frequently."
 format: pdf
 toc: TRUE
-bibliography: outputs/paper/references.bib
+bibliography: /cloud/project/outputs/paper/references.bib
 ---
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
+#### Preamble ####
+# Purpose: Research paper about investigating the impact of gender and age on the severity of COVID-19 based on data provided from Open Data Toronto. 
+# Author: Shuhan Yang
+# Date: Jan 25, 2024
+# Contact: jasminesh.yang@mail.utoronto.ca
+
 #Set up library 
-library("tinytex")
+#library("tinytex")
 library(knitr)
 library(janitor)
 library(lubridate)
 library(tidyverse)
+library(kableExtra)
 # Load in the data
-covid_data <- read.csv("outputs/data/cleaned_data.csv")
+covid_data <- read.csv("/cloud/project/outputs/data/cleaned_covid_data.csv")
 ```
 
 \newpage
 
 # 1. Introduction
-COVID-19 has significantly impacted our society on a global scale. Typically, widespread viruses possess a pattern of targeting certain demographics. For instance, males can be are more susceptible to infection in the case of virus x, while children are more susepible of catching virus y. Therefore, this research serves the purpose to investigate whether COVID-19 has targeted demographics, more specifically, the research will focus on the effects of gender and age. Note that this report used generative-AI tools for the purpose of data cleaning and graphical analysis. 
+COVID-19 has significantly impacted our society on a global scale. Typically, widespread viruses possess a pattern of targeting certain demographics [@Piret_Boivin_2020]. For instance, males can be are more susceptible to infection in the case of virus x, while children are more susepible of catching virus y. Therefore, this research serves the purpose to investigate whether COVID-19 has targeted demographics, more specifically, the research will focus on the effects of gender and age. 
 
-The COVID-19 data retrieved from opendatatoronto provides a public record of individuals infected by the virous (tested positive). Analyzing trends in this dataset by employing a statistical approach can possibly help the toronto public health system improve virus prevention strategies, such as identifying high-risk popuylations and insights to vaccine developments, in case of future pandemics or breakouts.
+The COVID-19 data retrieved from opendatatoronto provides a public record of individuals infected by the virous (tested positive). Analyzing trends in this dataset by employing a statistical approach can possibly help the toronto public health system improve virus prevention strategies, such as identifying high-risk populations and insights to vaccine developments, in case of future pandemics or breakouts.
 
-In the following paragraphs, I will first introduce the dataset, then move on to the initial statistic analysis of the data. I will use two bar charts to illustrate the overall distribution of the two main variables I want to study for: age and gender. Then, using another bar chart, it will indicate the COVID cases by both age and gender groups, showing the female and male distribution for each age interval side by side. Moving on to the Severity Analysis section (will include reference later), I will conduct additional analysis to study the specific impact that a person's age and gender has on the severity of their COVID infection. The final section (will add reference later) will touch on trend analyses to summarize COVID development with the passage of time. 
+In the following paragraphs, I will first introduce the dataset, then move on to the initial statistic analysis of the data. I will use two bar charts to illustrate the overall distribution of the two main variables I want to study for: age and gender. Then, using another bar chart, it will indicate the COVID cases by both age and gender groups, showing the female and male distribution for each age interval side by side. Moving on to the Severity Analysis section, I will conduct additional analysis to study the specific impact that a person's age and gender has on the severity of their COVID infection. The final section will touch on trend analyses to summarize COVID development with the passage of time. 
 
 # 2. COVID-19 Data
-To investigate the COVID infectious trends in Toronto, I retrieved the dataset "COVID19 cases.csv" from the Toronto Open Data Portal [@citedata]. This dataset contains 413474 observations and 15 variables. Among these 15 variables, this report will focus on four majour variables to conduct further analysis: age, gender, severity(ever_hospitalized), date. By using R [@citeR], and R packages "tidyverse" [@citetidyverse], "dplyr" [@citedplyr], "janitor" [@citejanitor], and "knitr" [@citeknitr], I cleaned the dataset by first checking whether there exists missing value, and then convert the date column name to ymd format, finally standardize the column names.
-
-# 3. Graphical Analysis 
-Having a foundation of what the dataset look-like, we will now come to the graphical analysis part. We will look at the direct distribution of the Age Group and Gender data using a bar chart. A bar chart can provide clear view on the total distribution of the data: mean, median, skewness, shape.
-
-## 3.1. Distribution Analysis
-Bar Chart for Age Group Distribution
+To investigate the COVID infectious trends in Toronto, I retrieved the dataset "COVID19 cases.csv" from the Toronto Open Data Portal [@citeopendatatoronto]. Other similar data exists, but I want this research to base on the most recent updated one, as of year 2024, so "COVID19 cases.csv" is specifically chosen. This unedited data [@City_of_Toronto_Open_Data_Portal] contains 413474 observations and 15 variables. The 15 variables include the id, outbreak associated, age group, neighbourhood name, source of infection, gender, and other related variables for each observations. Among these 15 variables, this report will focus on four major variables to conduct further analysis: age, gender, ever_hospitalized, and date. Variable age is measured by a number range for instance 20-29; gender contains 9 different types in total with one of them listed "Not Listed"; ever-hospitalized is either "Yes" or "No". By using R [@citeR], and R packages "tidyverse" [@citetidyverse], "janitor" [@citejanitor], "lubridate" [@citelubridate], "kableExtra" [@citekableExtra], knitr" [@citeknitr], I first cleaned the dataset by checking missing values and convert the dates format to "Year-Month-Day", then using [@citeggplot] to conduct graphical analysis based on the dataset. The following table (see @tbl-one) will illustrate 6 rows for the COVID-19 cases data, to gain a general idea of what the dataset looks like. 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
+#| label: tbl-one
+#| tbl-cap: "Illustration of the COVID-19 Cases Dataset"
+data_head <- head(covid_data, 6)
+kable(data_head, "latex", booktabs = TRUE) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), latex_options = c("striped", "hold_position"))
+```
+
+
+# 3. Graphical Analysis 
+Having a foundation knowledge of the dataset, we will now come to the graphical analysis part. We will look at the direct distribution of age and gender using bar charts. A bar chart can provide clear view on the total distribution of the data: mean, median, skewness, shape.
+
+## 3.1. Distribution Analysis
+The following graph (see @fig-one) displays the distribution of COVID-19 cases across different age groups.From the bar chart above, the data is positively skewed since it has a longer tail on the right hand side. The skewness aligns with the shape of the distribution that majority of the dataset is concentrated on the left hand side, meaning that more COVID cases are younger generations.  
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#| label: fig-one
+#| fig-cap: "Bar Chart for Age Group Distribution"
 ggplot(covid_data, aes(x = Age.Group)) +
   geom_bar() +
   labs(title = "Distribution of COVID-19 Cases by Age Group",
        x = "Age Group",
        y = "Number of Cases") +
-  theme_minimal() +
+  theme_classic() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Rotate x-axis labels so it does not squeeze on the x-axis
 
 ```
-This graph displays the distribution of COVID-19 cases across different age groups.From the bar chart above, the data is positively skewed since it 
-has a longer tail on the right hand side. The skewness aligns with the shape of the distribution that majority of the dataset is concentrated 
-on the left hand side, meaning that more COVID cases are younger generations.  
 
+Looking at another bar chart (see @fig-two) that shows the distribution of COVID-19 cases between different types of genders, the graph shows that within this dataset, more COVID cases are distributed in the female group. Now we can summarize that based on the initial analysis, female and younger individuals are more likely to get infected by COVID.
 
-Looking at another bar chart that shows the distribution of COVID-19 cases between different types of genders, the graph shows that within this
-dataset, more COVID cases are distributed in the female group. 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
+#| label: fig-two
+#| fig-cap: "Bar Chart for Gender Distribution"
 # Bar Chart for Gender Distribution
 ggplot(covid_data, aes(x = Client.Gender)) +
   geom_bar() +
   labs(title = "Distribution of COVID-19 Cases by Gender",
        x = "Gender",
        y = "Number of Cases") +
-  theme_minimal() + 
+  theme_classic() + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-Now we can summarize that based on the initial analysis, female and younger individuals are more likely to get infected by COVID.
+To further testify this conclusion, analysis for the data that include both variable: age, gender is conducted. This bar chart (see @fig-three) will show individuals' gender side by side within each age group interval. Analysing the graph, I found that female typically have more chance to get infected compare to male especially in younger and middle age: 20-59. It also worth noticing that female aging 90 years or older are approximately twice as likely to get COVID than male. Thus if the nation encounter another similar type of virus, the health system can implement provision strategy with a focus on old age females as well. 
 
-To further testify this conclusion, analysis for the data that include both variable: age, gender is conducted. This bar chart will show individuals' gender side by side within each age group interval. Analysing the graph, I found that female typically have more chance to get infected compare to male especially in younger and middle age: 20-59. It also worth noticing that female aging 90 years or older are approximately twice as likely to get COVID than male. Thus if the nation encounter another similar type of virus, the health system can implement provision strategy with a focus on old age females as well. 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
+#| label: fig-three
+#| fig-cap: "Bar Chart for Age Group and Gender Distribution"
 # Bar Chart for Age Group and Gender Distribution
 ggplot(covid_data, aes(x = Age.Group, fill = Client.Gender)) +
   geom_bar(position = "dodge") +
   labs(title = "Distribution of COVID-19 Cases by Age Group and Gender",
        x = "Age Group",
        y = "Number of Cases") +
-  theme_minimal() +
+  theme_classic() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
 ## 3.2. Severity Analysis
 
-Having a foundation knowledge about the distribution of our dataset, we will now look at how will age group affect the severity of COVID infections. This analytical segment aims to find which type of generation can get more severe if infect COVID. By developing the group most at risk, the public health system know how to allocate resources efficiently, such as the number of beds in hospital needed, to prepare any future virus outbreaks.As when COVID first spread during 2021-2022, hospitals worldwide are full with patients and run out of beds so many individuals are not able to get the treatment they need. For this analysis, I assume that severity is based on hospitalization rates. Observing from the graph, older age group especially 70 to 79 and 80 to 89 generation are severely affected by Covid infections. They exhibit the most hospitalized rate. This aligns with the study (need to find a study and reference later) indicating older generations' immune system and somatic function are weaker than younger generations. 
+Having a foundation knowledge about the distribution of our dataset, we will now look at how will age group affect the severity of COVID infections. By developing the group most at risk, the public health system know how to allocate resources efficiently, such as the number of beds in hospital needed or quarantine plans, to prepare any future virus outbreaks. For this analysis, I assume that severity is based on hospitalization rates, with in hospital considered severe. Observing from the graph (see @fig-four), older age group especially 70 to 79 and 80 to 89 generation are severely affected by Covid infections. They exhibit the most hospitalized rate. This aligns with the study indicating older generations' immune system and somatic function are weaker than younger generations [@Immune]. 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
+#| label: fig-four
+#| fig-cap: "Bar Chart for Severity Analysis"
 covid_data$Severity <- ifelse(covid_data$Ever.Hospitalized == "Yes", "Severe", "Mild")
 
 # Bar Chart for Severity Analysis
@@ -95,40 +114,42 @@ ggplot(covid_data, aes(x = Age.Group, fill = Severity)) +
        x = "Age Group",
        y = "Number of Cases",
        fill = "Severity") +
-  theme_minimal() + 
+  theme_classic() + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
 
 ## 3.3. Trend Analysis 
+
+As COVID elapsed for several years, in this section, we will also use line graphs to study its trends with the progress of time. The below graph (see @fig-trendsidebyside-1) shows COVID-19 started in 2020, with the infection number peaked around year 2021: approximately 175,000 cases. With the world getting adept to the virus, several vaccines were developed thus we see in the graph there is a sharp decrease from 2023 to 2024. In the current year, 2024, COVID cases nearly vanished as the World Health Organization announced the end of COVID emergency [@ends].
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
+#| label: fig-trendsidebyside
+#| fig-cap: "COVID Trends Analysis Over Time"
+#| fig-subcap: ["Trend of COVID-19 Cases Over Time","Trend of COVID-19 Cases Over Time by Age Group"]
+#| layout-ncol: 2
 #Extracting only Year from the data date to have a better visualization on the x-axis of the graph
 covid_data$Year <- year(covid_data$Episode.Date)
 
 # Line Graph for Trend Over Time with Year on X-axis
 ggplot(covid_data, aes(x = Year, group = 1)) +
   geom_line(stat = "count") +
-  labs(title = "Trend of COVID-19 Cases Over Time",
+  labs(
        x = "Year",
        y = "Number of Cases") +
-  theme_minimal()
+  theme_classic()
 
-```
-The above graph shows COVID-19 started in 2020, with the infection number peaked around year 2021: approximately 175,000 cases. With the world getting adept to the virus, several vaccines were developed thus we see in the graph there is a sharp decrease from 2023 to 2024. In the current year, 2024, COVID cases nearly vanished as the World Health Organization announced the end of COVID emergency (cite reference later). 
-
-```{r echo=FALSE, message=FALSE, warning=FALSE}
 # Line Graph for Trend Over Time
 covid_data$Year <- year(covid_data$Episode.Date)
 ggplot(covid_data, aes(x = Year, group = Age.Group, color = Age.Group)) +
   geom_line(stat = "count") +
-  labs(title = "Trend of COVID-19 Cases Over Time by Age Group",
+  labs(
        x = "Date",
        y = "Number of Cases") +
-  theme_minimal()
+  theme_classic()
 
 ```
 
-To have a more detail look at each age segment contributing to the overall trend line that we previously discussed, this graph shows a trend line for each age group with the passage of time on the x-axis. Individuals aging between 19 to 39 exhibit the most change in shape. The trends actually align with the overall trend line since the younger generation also consist the majority of COVID cases data (like the discussion in the Distribution Analysis mentioned).  
+To have a more detail look at each age segment contributing to the overall trend line that we previously discussed, this graph (see @fig-trendsidebyside-2) shows a trend line for each age group with the passage of time on the x-axis. Individuals aging between 19 to 39 exhibit the most change in shape. The trends actually align with the overall trend line since as discussed in the distribution analysis, the younger generations consist the majority of COVID cases data.  
 
 # 4. Conclusion 
 Since COVID-19 alters our society in a multitude of ways, studies around this topic is essential as results can improve the overall health system for nations. In conclusion, this investigation on the impact of gender and age on the severity of COVID-19 has yielded several key findings. Firstly, the data indicates younger generations and females are more susceptible to COVID infections. While examining the severity analysis section, the outcome reveals that older age groups typically can contract more severe illnesses as evidenced by their higher hospitalized rate. Additionally, the distribution analysis indicates a notable trend: biological females of ages greater than 90 are almost twice as likely to be infected as their male counterparts. Based on the data analysis in this paper, the group that is most at risk of contracting severe COVID-19 infections in Toronto are elderly females. 

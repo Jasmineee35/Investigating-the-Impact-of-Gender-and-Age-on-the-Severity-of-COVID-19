@@ -15,12 +15,14 @@ install.packages("opendatatoronto")
 library("opendatatoronto")
 install.packages("tidyverse")
 library("tidyverse")
+install.packages("kableExtra")
+library("kableExtra")
 
 # Load in the data that the paper is interested in working on
 covid <-
   # Each package is associated with a unique id  found in the "For 
   # Developers" tab of the relevant page from Open Data Toronto
-  # https://open.toronto.ca/dataset/daily-shelter-overnight-service-occupancy-capacity/
+  # https://open.toronto.ca/dataset/covid-19-cases-in-toronto/
   list_package_resources("64b54586-6180-4485-83eb-81e8fae3b8fe") |>
   # Within that package, we are interested in the most up-to-date (year 2024) data-set
   filter(name == 

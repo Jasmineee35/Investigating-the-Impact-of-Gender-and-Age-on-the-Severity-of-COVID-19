@@ -9,7 +9,7 @@ library(dplyr)
 library(lubridate)
 
 # Read in the data-set
-covid_data_clean <- read.csv("unedited_data.csv")
+covid_data_clean <- read.csv("inputs/data/unedited_data.csv")
 
 # Check if there is any missing values
 summary(covid_data_clean)
@@ -21,5 +21,6 @@ covid_data_clean$Reported.Date <- ymd(covid_data_clean$Reported.Date)
 # Save the cleaned data
 write_csv(
   x = covid_data_clean,
-  file = "cleaned_data.csv"
+  file = "cleaned_covid_data.csv"
 )
+
