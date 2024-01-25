@@ -84,6 +84,7 @@ ggplot(covid_data, aes(x = Age.Group, fill = Client.Gender)) +
 ## 3.2. Severity Analysis
 
 Having a foundation knowledge about the distribution of our dataset, we will now look at how will age group affect the severity of COVID infections. This analytical segment aims to find which type of generation can get more severe if infect COVID. By developing the group most at risk, the public health system know how to allocate resources efficiently, such as the number of beds in hospital needed, to prepare any future virus outbreaks.As when COVID first spread during 2021-2022, hospitals worldwide are full with patients and run out of beds so many individuals are not able to get the treatment they need. For this analysis, I assume that severity is based on hospitalization rates. Observing from the graph, older age group especially 70 to 79 and 80 to 89 generation are severely affected by Covid infections. They exhibit the most hospitalized rate. This aligns with the study (need to find a study and reference later) indicating older generations' immune system and somatic function are weaker than younger generations. 
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 covid_data$Severity <- ifelse(covid_data$Ever.Hospitalized == "Yes", "Severe", "Mild")
 
@@ -115,7 +116,6 @@ ggplot(covid_data, aes(x = Year, group = 1)) +
 ```
 The above graph shows COVID-19 started in 2020, with the infection number peaked around year 2021: approximately 175,000 cases. With the world getting adept to the virus, several vaccines were developed thus we see in the graph there is a sharp decrease from 2023 to 2024. In the current year, 2024, COVID cases nearly vanished as the World Health Organization announced the end of COVID emergency (cite reference later). 
 
-
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 # Line Graph for Trend Over Time
 covid_data$Year <- year(covid_data$Episode.Date)
@@ -134,5 +134,5 @@ To have a more detail look at each age segment contributing to the overall trend
 Since COVID-19 alters our society in a multitude of ways, studies around this topic is essential as results can improve the overall health system for nations. In conclusion, this investigation on the impact of gender and age on the severity of COVID-19 has yielded several key findings. Firstly, the data indicates younger generations and females are more susceptible to COVID infections. While examining the severity analysis section, the outcome reveals that older age groups typically can contract more severe illnesses as evidenced by their higher hospitalized rate. Additionally, the distribution analysis indicates a notable trend: biological females of ages greater than 90 are almost twice as likely to be infected as their male counterparts. Based on the data analysis in this paper, the group that is most at risk of contracting severe COVID-19 infections in Toronto are elderly females. 
 
 \newpage
-# 5.0. Reference 
+# 5. Reference 
 
